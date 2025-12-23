@@ -99,46 +99,58 @@
         out.println("<label>importo</label><br><input required class=\"in\" name=\"imp\" type=\"number\" step=\".01\" size=\"100\" value='"+rsmr.getString("imp")+"'><br>");//BigDecimal
         //----NUMBER
         PiCo p = new PiCo(DbParameter.getDb());
-        p.scorriConti(4, PiCo.pc.getConto(1));
+        p.scorriConti(4, PiCo.pc.getConto(6));
         int j = p.alConti.getSize();
         p.aConti = new Conto[j];
         p.alConti.getArr(p.aConti);
         PiCo q = new PiCo(DbParameter.getDb());
-        q.scorriConti(4, PiCo.pc.getConto(2));
+        q.scorriConti(4, PiCo.pc.getConto(50000));
         int k = q.alConti.getSize();
         q.aConti = new Conto[k];
         q.alConti.getArr(q.aConti);
-        int[] x = new int[j+k];
-        String[] descriz = new String[j+k];
+        PiCo t = new PiCo(DbParameter.getDb());
+        t.scorriConti(4, PiCo.pc.getConto(100000));
+        int l = t.alConti.getSize();
+        t.aConti = new Conto[l];
+        t.alConti.getArr(t.aConti);
+        PiCo y = new PiCo(DbParameter.getDb());
+        y.scorriConti(4, PiCo.pc.getConto(150000));
+        int s = y.alConti.getSize();
+        y.aConti = new Conto[s];
+        y.alConti.getArr(y.aConti);
+        int[] x = new int[j+k+l+s];
+        String[] descriz = new String[j+k+l+s];
         SistemaXDbPc sistpc = new SistemaXDbPc(DbParameter.getDb());
         for (int i=0; i<j; i++){
-            x[i] = PiCo.pc.getConto(p.aConti[i].getId()).getId();
-//            if(x[i]==0 || x[i]==1 || x[i]==2 || x[i]==99999999 || x[i]==999999999)
-//                continue;
-//            else{
+                x[i] = PiCo.pc.getConto(p.aConti[i].getId()).getId();
                 String sql1 = "select id, descr from public.pc where id = "+x[i]+";";
                 ResultSet rspc =sistpc.query(sql1);
                 rspc.next();
                 descriz[i] = rspc.getString("descr");
-//            }
         }
         for (int i=0; i<k; i++){
-            x[i+j] = PiCo.pc.getConto(q.aConti[i].getId()).getId();
-//            if(x[i]==0 || x[i]==1 || x[i]==2 || x[i]==99999999 || x[i]==999999999)
-//                continue;
-//            else{
+                x[i+j] = PiCo.pc.getConto(q.aConti[i].getId()).getId();
                 String sql1 = "select id, descr from public.pc where id = "+x[i+j]+";";
                 ResultSet rspc =sistpc.query(sql1);
                 rspc.next();
                 descriz[i+j] = rspc.getString("descr");
-//            }
+        }
+        for (int i=0; i<l; i++){
+                x[i+j+k] = PiCo.pc.getConto(t.aConti[i].getId()).getId();
+                String sql1 = "select id, descr from public.pc where id = "+x[i+j+k]+";";
+                ResultSet rspc =sistpc.query(sql1);
+                rspc.next();
+                descriz[i+j+k] = rspc.getString("descr");
+        }
+        for (int i=0; i<s; i++){
+                x[i+j+k+l] = PiCo.pc.getConto(y.aConti[i].getId()).getId();
+                String sql1 = "select id, descr from public.pc where id = "+x[i+j+k+l]+";";
+                ResultSet rspc =sistpc.query(sql1);
+                rspc.next();
+                descriz[i+j+k+l] = rspc.getString("descr");
         }
         Conto current = new Conto (DbParameter.getDb());
         
-        //String sqlpc="select id, descr from pc where true order by descr;";
-        //SistemaXDbPc dbpc = new SistemaXDbPc(DbParameter.getDb());
-        //ResultSet pc = dbpc.query(sqlpc);
-        //out.println("<br><select id=\"selpc\" onchange=\"opzpc($(this).val());\">");
         String opz="";
         int idpc =0;
             //out.println("<option disabled selected value=\"0\" "+opz+" >idconto: 0  descrizione: "+"Scegliere un conto"+"</option>");
@@ -158,7 +170,7 @@
         out.println("<input class=\"con\" required onload=\"descrconto1($(this).val());\" onchange=\"descrconto($(this).val(),$(this).attr('id'));\" type=\"text\" name=\"pcid\" list=\"piano\" placeholder=\"Scegli il Conto...\" id=\"regular\" /><span class=\"conspan\" id=\"pcspan\"></span>");
         out.println("<datalist id=\"piano\">");
     
-          for (int z=0; z<(j+k); z++){
+          for (int z=0; z<(j+k+l+s); z++){
                 if(x[z]==rsmr.getInt("pcid"))
                     opz=" selected";
                 else
@@ -167,14 +179,22 @@
                 if(x[z]==0){
                     ;
                 }
-                else if(x[z]==1){
-                    out.println("<option disabled value=\"1\">Stato patrimoniale</option>");
-                }else if(x[z]==2){
-                    out.println("<option disabled value=\"2\">Conto economico</option>");
-                }else if(x[z]==99999999){
-                    out.println("<option disabled value=\"99999999\">Coda sp</option>");
-                }else if(x[z]==999999999){
-                    out.println("<option disabled value=\"999999999\">Coda ce</option>");
+                else if(x[z]==6){
+                    out.println("<option readonly value=\"6\">ATTIVITA'</option>");
+                }else if(x[z]==50000){
+                    out.println("<option readonly value=\"50000\">PASSIVITA'</option>");
+                }else if(x[z]==100000){
+                    out.println("<option readonly value=\"100000\">COSTI</option>");
+                }else if(x[z]==150000){
+                    out.println("<option readonly value=\"150000\">RICAVI</option>");
+                }else if(x[z]==49999){
+                    out.println("<option readonly value=\"49999\">Coda Attività</option>");
+                }else if(x[z]==99999){
+                    out.println("<option readonly value=\"149999\">Coda Passività</option>");
+                }else if(x[z]==149999){
+                    out.println("<option readonly value=\"149999\">coda Costi</option>");
+                }else if(x[z]==199999){
+                    out.println("<option readonly value=\"199999\">Coda Ricavi</option>");
                 }else{// id: "+x[z]+" descr: "+descriz[z]+"
                     out.println("<option "+opz+" id=\"opt\""+x[z]+" value='"+x[z]+" || "+descriz[z]+"'></option>");//<span id=\"descrizioneconto"+x[z]+"\"></span>");
 //                    out.println("<span id=\"spanpc"+x[z]+"\"></span>");
